@@ -4,10 +4,6 @@ pub trait Database {
     }
 }
 
-pub struct DatabaseImpl {}
-
-impl Database for DatabaseImpl {}
-
 pub trait UseCase {
     type Database: Database;
 
@@ -15,17 +11,6 @@ pub trait UseCase {
 
     fn run(&self) {
         println!("selected {}", self.database().select());
-    }
-}
-
-pub struct UseCaseImpl {
-    database: DatabaseImpl,
-}
-
-impl UseCase for UseCaseImpl {
-    type Database = DatabaseImpl;
-    fn database(&self) -> &Self::Database {
-        &self.database
     }
 }
 
@@ -39,38 +24,30 @@ pub trait Handler {
     }
 }
 
-pub struct HandlerImpl {
-    use_case: UseCaseImpl,
-}
-
-impl Handler for HandlerImpl {
-    type UseCase = UseCaseImpl;
-
-    fn use_case(&self) -> &Self::UseCase {
-        &self.use_case
-    }
-}
-
 pub struct Container {}
 
 pub fn new_container() -> Container {
     Container {}
 }
 
+impl Database for Container {}
+
+impl UseCase for Container {
+    type Database = Self;
+    fn database(&self) -> &Self::Database {
+        &self
+    }
+}
+
+impl Handler for Container {
+    type UseCase = Self;
+    fn use_case(&self) -> &Self::UseCase {
+        &self
+    }
+}
+
 impl Container {
-    pub fn handler(&self) -> HandlerImpl {
-        HandlerImpl {
-            use_case: self.use_case(),
-        }
-    }
-
-    pub fn use_case(&self) -> UseCaseImpl {
-        UseCaseImpl {
-            database: self.database(),
-        }
-    }
-
-    pub fn database(&self) -> DatabaseImpl {
-        DatabaseImpl {}
+    pub fn handler(&self) -> &Self {
+        &self
     }
 }

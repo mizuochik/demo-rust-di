@@ -1,4 +1,4 @@
-use demo_rust_di::{dynamic, static_cake::{self, Handler}, static_param};
+use demo_rust_di::{dynamic, static_param, static_cake::{self, Handler}};
 
 fn main() {
     dynamic::new_container().handler().handle();
