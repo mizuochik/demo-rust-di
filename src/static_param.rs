@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 pub trait Database {
     fn select(&self) -> String;
 }
@@ -15,7 +17,7 @@ pub trait UseCase {
 }
 
 pub struct UseCaseImpl<D: Database> {
-    database: D,
+    database: Arc<D>,
 }
 
 impl<D: Database> UseCase for UseCaseImpl<D> {
@@ -25,7 +27,7 @@ impl<D: Database> UseCase for UseCaseImpl<D> {
 }
 
 pub struct Handler<U: UseCase> {
-    use_case: U,
+    use_case: Arc<U>,
 }
 
 impl<U: UseCase> Handler<U> {
@@ -41,19 +43,19 @@ pub fn new_container() -> Container {
 }
 
 impl Container {
-    pub fn database(&self) -> DatabaseImpl {
-        DatabaseImpl {}
+    pub fn database(&self) -> Arc<DatabaseImpl> {
+        Arc::new(DatabaseImpl {})
     }
 
-    pub fn use_case(&self) -> UseCaseImpl<DatabaseImpl> {
-        UseCaseImpl {
+    pub fn use_case(&self) -> Arc<UseCaseImpl<DatabaseImpl>> {
+        Arc::new(UseCaseImpl {
             database: self.database(),
-        }
+        })
     }
 
-    pub fn handler(&self) -> Handler<UseCaseImpl<DatabaseImpl>> {
-        Handler {
+    pub fn handler(&self) -> Arc<Handler<UseCaseImpl<DatabaseImpl>>> {
+        Arc::new(Handler {
             use_case: self.use_case(),
-        }
+        })
     }
 }
