@@ -47,7 +47,7 @@ pub fn new_container() -> Container {
 }
 
 impl Container {
-    pub fn database(&self) -> Arc<DatabaseImpl> {
+    pub fn database(&self) -> Arc<impl Database> {
         Arc::new(DatabaseImpl {})
     }
 
