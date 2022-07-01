@@ -16,7 +16,7 @@ pub trait UseCase {
     fn run(&self);
 }
 
-pub struct UseCaseImpl<D: Database> {
+pub struct UseCaseImpl<D> {
     database: Arc<D>,
 }
 
@@ -26,7 +26,7 @@ impl<D: Database> UseCase for UseCaseImpl<D> {
     }
 }
 
-pub struct Handler<U: UseCase> {
+pub struct Handler<U> {
     use_case: Arc<U>,
 }
 
