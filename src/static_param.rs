@@ -26,12 +26,16 @@ impl<D: Database> UseCase for UseCaseImpl<D> {
     }
 }
 
-pub struct Handler<U> {
+pub trait Handler {
+    fn handle(&self);
+}
+
+pub struct HandlerImpl<U> {
     use_case: Arc<U>,
 }
 
-impl<U: UseCase> Handler<U> {
-    pub fn handle(&self) {
+impl<U: UseCase> Handler for HandlerImpl<U> {
+    fn handle(&self) {
         self.use_case.run();
     }
 }
@@ -47,14 +51,14 @@ impl Container {
         Arc::new(DatabaseImpl {})
     }
 
-    pub fn use_case(&self) -> Arc<UseCaseImpl<DatabaseImpl>> {
+    pub fn use_case(&self) -> Arc<impl UseCase> {
         Arc::new(UseCaseImpl {
             database: self.database(),
         })
     }
 
-    pub fn handler(&self) -> Arc<Handler<UseCaseImpl<DatabaseImpl>>> {
-        Arc::new(Handler {
+    pub fn handler(&self) -> Arc<impl Handler> {
+        Arc::new(HandlerImpl {
             use_case: self.use_case(),
         })
     }
