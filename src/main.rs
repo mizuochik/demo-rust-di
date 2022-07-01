@@ -1,5 +1,6 @@
-use demo_rust_di::{static_param::{self, Handler}};
+use demo_rust_di::static_cake2::{self, MainDep, Handler};
 
 fn main() {
-    static_param::new_container().handler().handle();
+    let d = static_cake2::new_dep();
+    d.handler().handle();
 }
