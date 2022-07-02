@@ -42,35 +42,22 @@ impl Handler for HandlerImpl {
 }
 
 pub struct Container {
-    database_cache: Option<Arc<dyn Database>>,
+    pub database: Arc<dyn Database>,
+    pub use_case: Arc<dyn UseCase>,
+    pub handler: Arc<dyn Handler>,
 }
 
 pub fn new_container() -> Container {
+    let db = Arc::new(DBImpl {});
+    let uc = Arc::new(UseCaseImpl {
+        database: db.clone(),
+    });
+    let h = Arc::new(HandlerImpl {
+        use_case: uc.clone(),
+    });
     Container {
-        database_cache: None,
-    }
-}
-
-impl Container {
-    pub fn handler(&mut self) -> Arc<dyn Handler> {
-        Arc::new(HandlerImpl {
-            use_case: self.use_case(),
-        })
-    }
-
-    pub fn use_case(&mut self) -> Arc<dyn UseCase> {
-        Arc::new(UseCaseImpl {
-            database: self.database(),
-        })
-    }
-
-    pub fn database(&mut self) -> Arc<dyn Database> {
-        match &self.database_cache {
-            None => {
-                self.database_cache = Some(Arc::new(DBImpl {}));
-                self.database()
-            }
-            Some(db) => db.clone(),
-        }
+        database: db.clone(),
+        use_case: uc.clone(),
+        handler: h.clone(),
     }
 }

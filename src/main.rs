@@ -1,6 +1,6 @@
-use demo_rust_di::static_cake2::{self, MainDI, Handler};
+use demo_rust_di::dynamic;
 
 fn main() {
-    let d = static_cake2::new_di();
-    d.handler().handle();
+    let c = dynamic::new_container();
+    c.handler.handle();
 }
