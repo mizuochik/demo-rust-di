@@ -4,9 +4,9 @@ pub trait Database {
     fn select(&self) -> String;
 }
 
-pub struct DBImpl {}
+pub struct DatabaseImpl {}
 
-impl Database for DBImpl {
+impl Database for DatabaseImpl {
     fn select(&self) -> String {
         String::from("<selected>")
     }
@@ -48,7 +48,7 @@ pub struct DI {
 }
 
 pub fn new_di() -> DI {
-    let db = Arc::new(DBImpl {});
+    let db = Arc::new(DatabaseImpl {});
     let uc = Arc::new(UseCaseImpl {
         database: db.clone(),
     });
