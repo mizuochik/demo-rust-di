@@ -1,6 +1,6 @@
-use demo_rust_di::static_cake2::{self, MainDep, Handler};
+use demo_rust_di::static_cake2::{self, MainDI, Handler};
 
 fn main() {
-    let d = static_cake2::new_dep();
+    let d = static_cake2::new_di();
     d.handler().handle();
 }

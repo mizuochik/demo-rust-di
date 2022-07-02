@@ -16,18 +16,18 @@ pub trait UseCase {
     fn run(&self);
 }
 
-pub trait UseCaseDep {
+pub trait UseCaseDI {
     type Database: Database;
     fn database(&self) -> Arc<Self::Database>;
 }
 
 pub struct UseCaseImpl<D> {
-    dep: D,
+    di: D,
 }
 
-impl<D: UseCaseDep> UseCase for UseCaseImpl<D> {
+impl<D: UseCaseDI> UseCase for UseCaseImpl<D> {
     fn run(&self) {
-        println!("selected {}", self.dep.database().select());
+        println!("selected {}", self.di.database().select());
     }
 }
 
@@ -35,49 +35,50 @@ pub trait Handler {
     fn handle(&self);
 }
 
-pub trait HandlerDep {
+pub trait HandlerDI {
     type UseCase: UseCase;
     fn use_case(&self) -> Arc<Self::UseCase>;
 }
 
 pub struct HandlerImpl<D> {
-    dep: D,
+    di: D,
 }
 
-impl<D: HandlerDep> Handler for HandlerImpl<D> {
+impl<D: HandlerDI> Handler for HandlerImpl<D> {
     fn handle(&self) {
-        self.dep.use_case().run();
+        self.di.use_case().run();
     }
 }
 
-pub struct Dep {}
-
-pub fn new_dep() -> Arc<Dep> {
-    Arc::new(Dep {})
+pub struct DI {
 }
 
-impl UseCaseDep for Arc<Dep> {
+pub fn new_di() -> Arc<DI> {
+    Arc::new(DI{})
+}
+
+impl UseCaseDI for Arc<DI> {
     type Database = DatabaseImpl;
     fn database(&self) -> Arc<Self::Database> {
         Arc::new(DatabaseImpl {})
     }
 }
 
-impl HandlerDep for Arc<Dep> {
+impl HandlerDI for Arc<DI> {
     type UseCase = UseCaseImpl<Self>;
     fn use_case(&self) -> Arc<Self::UseCase> {
-        Arc::new(UseCaseImpl { dep: self.clone() })
+        Arc::new(UseCaseImpl { di: self.clone() })
     }
 }
 
-pub trait MainDep {
+pub trait MainDI {
     type Handler : Handler;
     fn handler(&self) -> Arc<Self::Handler>;
 }
 
-impl MainDep for Arc<Dep> {
+impl MainDI for Arc<DI> {
     type Handler = HandlerImpl<Self>;
     fn handler(&self) -> Arc<Self::Handler> {
-        Arc::new(HandlerImpl { dep: self.clone() })
+        Arc::new(HandlerImpl { di: self.clone() })
     }
 }
