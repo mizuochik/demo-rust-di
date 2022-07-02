@@ -41,9 +41,9 @@ impl<U: UseCase> Handler for HandlerImpl<U> {
 }
 
 pub struct Container {
-    database: Arc<DatabaseImpl>,
-    use_case: Arc<UseCaseImpl<DatabaseImpl>>,
-    handler: Arc<HandlerImpl<UseCaseImpl<DatabaseImpl>>>,
+    pub database: Arc<DatabaseImpl>,
+    pub use_case: Arc<UseCaseImpl<DatabaseImpl>>,
+    pub handler: Arc<HandlerImpl<UseCaseImpl<DatabaseImpl>>>,
 }
 
 pub fn new_container() -> Container {
@@ -58,19 +58,5 @@ pub fn new_container() -> Container {
         database: db.clone(),
         use_case: uc.clone(),
         handler: h.clone(),
-    }
-}
-
-impl Container {
-    pub fn database(&self) -> Arc<impl Database> {
-        self.database.clone()
-    }
-
-    pub fn use_case(&self) -> Arc<impl UseCase> {
-        self.use_case.clone()
-    }
-
-    pub fn handler(&self) -> Arc<impl Handler> {
-        self.handler.clone()
     }
 }
