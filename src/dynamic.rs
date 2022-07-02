@@ -41,13 +41,13 @@ impl Handler for HandlerImpl {
     }
 }
 
-pub struct Container {
+pub struct DI {
     pub database: Arc<dyn Database>,
     pub use_case: Arc<dyn UseCase>,
     pub handler: Arc<dyn Handler>,
 }
 
-pub fn new_container() -> Container {
+pub fn new_di() -> DI {
     let db = Arc::new(DBImpl {});
     let uc = Arc::new(UseCaseImpl {
         database: db.clone(),
@@ -55,7 +55,7 @@ pub fn new_container() -> Container {
     let h = Arc::new(HandlerImpl {
         use_case: uc.clone(),
     });
-    Container {
+    DI {
         database: db.clone(),
         use_case: uc.clone(),
         handler: h.clone(),
